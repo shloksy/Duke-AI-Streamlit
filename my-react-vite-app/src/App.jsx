@@ -5,141 +5,84 @@ const LearnLeap = () => {
   const [gradeLevel, setGradeLevel] = useState('');
   const [parentName, setParentName] = useState('');
   const [parentEmail, setParentEmail] = useState('');
-  const [password, setPassword] = useState(''); // New password state for New User
+  const [password, setPassword] = useState('');
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [subject, setSubject] = useState('');
-  const [showInitialPage, setShowInitialPage] = useState(true);
-  const [showReturningUserPage, setShowReturningUserPage] = useState(false); // New state for Returning User page
-  const [returningUserEmail, setReturningUserEmail] = useState(''); // Email for returning user login
-  const [returningUserPassword, setReturningUserPassword] = useState(''); // Password for returning user login
+  const [page, setPage] = useState('selectUserType');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsFormSubmitted(true);
+
+    const data = {
+      childName,
+      gradeLevel,
+      parentName,
+      parentEmail,
+      password
+    };
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/create_user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+      console.log('Success:', result);
+      setIsFormSubmitted(true);
+      setPage('selectSubject');
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
-  const handleSubjectSelect = (subject) => {
-    setSubject(subject);
-  };
-
-  const handleLogout = () => {
-    setChildName('');
-    setGradeLevel('');
-    setParentName('');
-    setParentEmail('');
-    setPassword('');
-    setIsFormSubmitted(false);
-    setSubject('');
-    setShowInitialPage(true);
-    setShowReturningUserPage(false);
-  };
-
-  const goToGetStarted = () => {
-    setShowInitialPage(false);
-    setShowReturningUserPage(false);
-  };
-
-  const goToReturningUser = () => {
-    setShowInitialPage(false);
-    setShowReturningUserPage(true);
-  };
-
-  const handleReturningUserSubmit = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
-    // Navigate to the welcome screen with math and English options
-    setIsFormSubmitted(true);
-    setShowInitialPage(false);
-    setShowReturningUserPage(false);
+
+    const data = {
+      parentEmail,
+      password
+    };
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/sign_in', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+      if (result.status === 'success') {
+        console.log('Sign-in successful:', result);
+        setIsFormSubmitted(true);
+        setPage('selectSubject');
+      } else {
+        setErrorMessage('Invalid Credentials');
+        console.error('Sign-in failed:', result.message);
+      }
+    } catch (error) {
+      setErrorMessage('Invalid Credentials');
+      console.error('Error:', error);
+    }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen w-screen bg-green-900">
-      <div className="w-full max-w-lg md:max-w-xl lg:max-w-2xl p-8 bg-white rounded-lg shadow-md">
-        {showInitialPage ? (
-          // Initial Page with New User and Returning User buttons
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-darkgreen-500 mb-6">Welcome to LearnLeap</h2>
-            <p className="text-lg text-gray-600 mb-6">Are you a new or returning user?</p>
-            <div className="flex justify-center space-x-4">
-              <button
-                className="bg-darkgreen-500 hover:bg-darkgreen-700 text-white font-bold py-3 px-6 rounded"
-                onClick={goToGetStarted}
-              >
-                New User
-              </button>
-              <button
-                className="bg-darkgreen-500 hover:bg-darkgreen-700 text-white font-bold py-3 px-6 rounded"
-                onClick={goToReturningUser}
-              >
-                Returning User
-              </button>
-            </div>
+    <div className="container mx-auto p-4">
+      <div className="max-w-md mx-auto bg-white p-8 rounded shadow">
+        {page === 'selectUserType' && (
+          <div>
+            <h2 className="text-3xl font-bold text-darkgreen-500 mb-6">Welcome</h2>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded mb-4" onClick={() => setPage('newUser')}>New User</button>
+            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded" onClick={() => setPage('returningUser')}>Returning User</button>
           </div>
-        ) : showReturningUserPage ? (
-          // Returning User Login Form
-          <form onSubmit={handleReturningUserSubmit}>
-            <h2 className="text-3xl font-bold text-darkgreen-500 mb-6">Returning User Login</h2>
-            <div className="mb-6">
-              <label className="block text-lg text-gray-600 mb-2" htmlFor="returningUserEmail">Email:</label>
-              <input
-                className="block w-full p-3 border border-gray-300 rounded"
-                type="email"
-                id="returningUserEmail"
-                value={returningUserEmail}
-                
-                onChange={(e) => setReturningUserEmail(e.target.value)}
-              />
-            </div>
-            <div className="mb-6">
-              <label className="block text-lg text-gray-600 mb-2" htmlFor="returningUserPassword">Password:</label>
-              <input
-                className="block w-full p-3 border border-gray-300 rounded"
-                type="password"
-                id="returningUserPassword"
-                value={returningUserPassword}
-                onChange={(e) => setReturningUserPassword(e.target.value)}
-              />
-            </div>
-            <button className="bg-darkgreen-500 hover:bg-darkgreen-700 text-white font-bold py-3 px-6 rounded" type="submit">
-              Log In
-            </button>
-          </form>
-        ) : isFormSubmitted ? (
-          subject === '' ? (
-            <div>
-              <h2 className="text-3xl font-bold text-darkgreen-500 mb-6">Welcome, {childName || "User"}!</h2>
-              <p className="text-lg text-gray-600 mb-6">
-                We'll send weekly reports to {parentName || "the registered parent"} at {parentEmail || "the registered email"}.</p>              
-              <h3 className="text-2xl font-bold text-darkgreen-500 mb-6">Select a Subject to Practice:</h3>
-              <div className="flex space-x-4 mb-6">
-                <button className="bg-darkgreen-500 hover:bg-darkgreen-700 text-white font-bold py-3 px-6 rounded" onClick={() => handleSubjectSelect('english')}>English</button>
-                <button className="bg-darkgreen-500 hover:bg-darkgreen-700 text-white font-bold py-3 px-6 rounded" onClick={() => handleSubjectSelect('math')}>Math</button>
-                <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded" onClick={handleLogout}>Log Out</button>
-              </div>
-            </div>
-          ) : subject === 'english' ? (
-            <div>
-              <h2 className="text-3xl font-bold text-darkgreen-500 mb-1">English Practice</h2>
-              <p className="text-lg text-gray-600 mb-3">Grade {gradeLevel}</p>
-              <p className="text-lg text-gray-600 mb-6">Get ready to practice your English comprehension skills!</p>
-              <div className="flex space-x-4">
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded" onClick={() => setSubject('')}>Back to Subject Selection</button>
-                <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded" onClick={handleLogout}>Log Out</button>
-              </div>
-            </div>
-          ) : subject === 'math' ? (
-            <div>
-              <h2 className="text-3xl font-bold text-darkgreen-500 mb-1">Math Practice</h2>
-              <p className="text-lg text-gray-600 mb-3">Grade {gradeLevel}</p>              
-              <p className="text-lg text-gray-600 mb-6">Get ready to practice your math skills!</p>
-              <div className="flex space-x-4">
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded" onClick={() => setSubject('')}>Back to Subject Selection</button>
-                <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded" onClick={handleLogout}>Log Out</button>
-              </div>
-            </div>
-          ) : null
-        ) : (
-          // "Get Started" Form Page for New User
+        )}
+        {page === 'newUser' && !isFormSubmitted && (
           <form onSubmit={handleSubmit}>
             <h2 className="text-3xl font-bold text-darkgreen-500 mb-6">Get Started</h2>
             <div className="mb-6">
@@ -160,41 +103,51 @@ const LearnLeap = () => {
             </div>
             <div className="mb-6">
               <label className="block text-lg text-gray-600 mb-2" htmlFor="parentName">Parent's Name:</label>
-              <input 
-                className="block w-full p-3 border border-gray-300 rounded" 
-                type="text" 
-                id="parentName" 
-                value={parentName} 
-                onChange={(e) => setParentName(e.target.value)} 
-              />
+              <input className="block w-full p-3 border border-gray-300 rounded" type="text" id="parentName" value={parentName} onChange={(e) => setParentName(e.target.value)} />
             </div>
             <div className="mb-6">
               <label className="block text-lg text-gray-600 mb-2" htmlFor="parentEmail">Parent's Email:</label>
-              <input 
-                className="block w-full p-3 border border-gray-300 rounded" 
-                type="email" 
-                id="parentEmail" 
-                value={parentEmail} 
-                onChange={(e) => setParentEmail(e.target.value)} 
-              />
+              <input className="block w-full p-3 border border-gray-300 rounded" type="email" id="parentEmail" value={parentEmail} onChange={(e) => setParentEmail(e.target.value)} />
             </div>
             <div className="mb-6">
               <label className="block text-lg text-gray-600 mb-2" htmlFor="password">Password:</label>
-              <input 
-                className="block w-full p-3 border border-gray-300 rounded" 
-                type="password" 
-                id="password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-              />
+              <input className="block w-full p-3 border border-gray-300 rounded" type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
-            <button 
-              className="bg-darkgreen-500 hover:bg-darkgreen-700 text-white font-bold py-3 px-6 rounded" 
-              type="submit"
-            >
-              Submit
-            </button>
+            <button className="bg-darkgreen-500 hover:bg-darkgreen-700 text-white font-bold py-3 px-6 rounded" type="submit">Submit</button>
           </form>
+        )}
+        {page === 'returningUser' && (
+          <form onSubmit={handleSignIn}>
+            <h2 className="text-3xl font-bold text-darkgreen-500 mb-6">Sign In</h2>
+            {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
+            <div className="mb-6">
+              <label className="block text-lg text-gray-600 mb-2" htmlFor="parentEmail">Parent's Email:</label>
+              <input className="block w-full p-3 border border-gray-300 rounded" type="email" id="parentEmail" value={parentEmail} onChange={(e) => setParentEmail(e.target.value)} />
+            </div>
+            <div className="mb-6">
+              <label className="block text-lg text-gray-600 mb-2" htmlFor="password">Password:</label>
+              <input className="block w-full p-3 border border-gray-300 rounded" type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            </div>
+            <button className="bg-darkgreen-500 hover:bg-darkgreen-700 text-white font-bold py-3 px-6 rounded" type="submit">Sign In</button>
+          </form>
+        )}
+        {page === 'selectSubject' && (
+          <div>
+            <h2 className="text-3xl font-bold text-darkgreen-500 mb-6">Select Subject</h2>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded mb-4" onClick={() => setSubject('english')}>English</button>
+            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded" onClick={() => setSubject('math')}>Math</button>
+          </div>
+        )}
+        {isFormSubmitted && subject && (
+          <div>
+            <h2 className="text-3xl font-bold text-darkgreen-500 mb-1">{subject === 'english' ? 'English Practice' : 'Math Practice'}</h2>
+            <p className="text-lg text-gray-600 mb-3">Grade {gradeLevel}</p>
+            <p className="text-lg text-gray-600 mb-6">Get ready to practice your {subject} skills!</p>
+            <div className="flex space-x-4">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded" onClick={() => setSubject('')}>Back to Subject Selection</button>
+              <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded" onClick={() => setIsFormSubmitted(false)}>Log Out</button>
+            </div>
+          </div>
         )}
       </div>
     </div>
