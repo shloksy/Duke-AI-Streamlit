@@ -144,8 +144,18 @@ const LearnLeap = () => {
             <p className="text-lg text-gray-600 mb-3">Grade {gradeLevel}</p>
             <p className="text-lg text-gray-600 mb-6">Get ready to practice your {subject} skills!</p>
             <div className="flex space-x-4">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded" onClick={() => setSubject('')}>Back to Subject Selection</button>
-              <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded" onClick={() => setIsFormSubmitted(false)}>Log Out</button>
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded"
+                      onClick={() => setSubject('')}>Back to Subject Selection
+              </button>
+              <button
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded"
+                  onClick={() => {
+                    setIsFormSubmitted(false);
+                    setPage('selectUserType');
+                  }}
+              >
+                Log Out
+              </button>
             </div>
           </div>
         )}
