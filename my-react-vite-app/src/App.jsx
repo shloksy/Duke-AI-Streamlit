@@ -191,8 +191,26 @@ const LearnLeap = () => {
             <p className="text-lg text-gray-600 mb-3">Grade {gradeLevel}</p>
             <p className="text-lg text-gray-600 mb-6">Get ready to practice your {subject} skills!</p>
             <div className="flex flex-col space-y-4">
-              <button className="button-hover-effect bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded" onClick={() => setPage('selectSubject')}>Back to Subject Selection</button>
-              <button className="button-hover-effect bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded" onClick={resetState}>Log Out</button>
+              <button
+                  className="button-hover-effect bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded"
+                  onClick={() => setPage('selectSubject')}>Back to Subject Selection
+              </button>
+              <button
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded"
+                  onClick={() => {
+                    setIsFormSubmitted(false);
+                    setPage('selectUserType');
+                    setChildName('');
+                    setGradeLevel('');
+                    setParentName('');
+                    setParentEmail('');
+                    setPassword('');
+                    setSubject('');
+                    setErrorMessage('');
+                  }}
+              >
+                Log Out
+              </button>
             </div>
           </div>
         )}
