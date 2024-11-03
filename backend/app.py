@@ -1,7 +1,8 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 import sqlite3
 import os
 from flask_cors import CORS
+from email_utils.send_email import send_email
 
 app = Flask(__name__)
 CORS(app)
@@ -75,6 +76,18 @@ def sign_in_endpoint():
         return jsonify({'status': 'success', 'message': 'Sign-in successful'})
     else:
         return jsonify({'status': 'error', 'message': 'Invalid credentials'}), 401
+
+@app.route('/api/logout', methods=['POST'])
+def logout():
+    # Clear the session or perform any other log out logic
+    session.clear()
+
+    # Send the email
+    result = send_email()
+    if 'success' in result:
+        return jsonify({'success': True, 'message': 'Logged out and email sent successfully'})
+    else:
+        return jsonify({'success': False, 'message': 'Failed to send email'}), 500
 
 if __name__ == '__main__':
     initialize_database()

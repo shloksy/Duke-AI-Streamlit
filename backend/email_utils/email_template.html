@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .email-container {
+      font-family: Arial, sans-serif;
+      color: #333;
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+      border: 1px solid #eaeaea;
+      border-radius: 8px;
+    }
+    .header {
+      text-align: center;
+      font-size: 24px;
+      color: #4CAF50;
+    }
+    .message {
+      font-size: 18px;
+      margin: 20px 0;
+    }
+    .image-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .footer {
+      font-size: 14px;
+      color: #888;
+      text-align: center;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="header">Practice Session Update</div>
+
+    <div class="message">
+      Your child has finished their practice session today at:
+      <span id="currentTime"></span>. <br>
+      If you would like to view your child's progress, please check the LeapLearn portal with your login!
+    </div>
+
+    <div class="image-container">
+        <img src="backend/logo.jpeg" alt="Session Image" width="100%" style="max-width: 500px;">
+    </div>
+
+    <div class="footer">
+      Thank you for being a member of our LeapLearn family. We look forward to helping your kid grow!
+    </div>
+  </div>
+
+  <script>
+    // JavaScript to display the current time
+    const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    document.getElementById('currentTime').innerText = currentTime;
+  </script>
+</body>
+</html>
