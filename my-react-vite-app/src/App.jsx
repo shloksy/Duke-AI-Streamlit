@@ -294,7 +294,18 @@ const handleLogout = async () => {
                 </button>
                 <button
                     className="button-hover-effect bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded"
-                    onClick={resetState}
+                    onClick={async () => {
+                      await handleLogout()
+                      setIsFormSubmitted(false);
+                      setPage('selectUserType');
+                      setChildName('');
+                      setGradeLevel('');
+                      setParentName('');
+                      setParentEmail('');
+                      setPassword('');
+                      setSubject('');
+                      setErrorMessage('');
+                    }}
                 >
                   Log Out
                 </button>
