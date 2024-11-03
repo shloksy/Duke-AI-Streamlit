@@ -56,6 +56,28 @@ const LearnLeap = () => {
     setPage('selectSubject');
   };
 
+const handleLogout = async () => {
+  try {
+    const response = await fetch('http://127.0.0.1:5000/api/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      alert('Logged out and email sent successfully');
+      resetState();
+    } else {
+      alert('Failed to log out and send email');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Failed to log out and send email');
+  }
+};
+
   const handleSubjectSelect = (selectedSubject) => {
     setSubject(selectedSubject);
     setGeneratedContent(
@@ -221,14 +243,19 @@ const LearnLeap = () => {
                 English
               </button>
               <button
-                className="button-hover-effect bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded"
-                onClick={() => handleSubjectSelect('math')}
-              >
-                Math
-              </button>
-              <button
-                className="button-hover-effect bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded"
-                onClick={resetState}
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded"
+                  onClick={async () => {
+                    await handleLogout()
+                    setIsFormSubmitted(false);
+                    setPage('selectUserType');
+                    setChildName('');
+                    setGradeLevel('');
+                    setParentName('');
+                    setParentEmail('');
+                    setPassword('');
+                    setSubject('');
+                    setErrorMessage('');
+                  }}
               >
                 Log Out
               </button>
