@@ -10,6 +10,10 @@ from deepgram import (
     LiveOptions,
     Microphone,
 )
+import certifi
+import ssl
+import requests
+import websocket
 
 load_dotenv()
 
@@ -18,11 +22,15 @@ app = Flask(__name__)
 is_finals = []
 all_transcriptions = []  # List to store each finalized utterance
 
+# Set the SSL context to use certifi's certificate bundle
+ssl_context = ssl.create_default_context(cafile=certifi.where())
+websocket.setdefaulttimeout(10)
+websocket.enableTrace(True)
 
 def get_speech():
     """Records speech, processes it through Deepgram, and returns the transcription."""
     try:
-        deepgram = DeepgramClient('083c79384eac5b4e2673e05cb069a53ff9d7af4b')
+        deepgram = DeepgramClient('14bd690ee7c4bd6f9aacaef36e9f61792b16b58c')
         dg_connection = deepgram.listen.websocket.v("1")
 
         def on_open(self, open, **kwargs):
