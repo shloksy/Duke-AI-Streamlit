@@ -1,4 +1,8 @@
 streamlit
-pandas
-numpy
-matplotlib
+Flask
+httpx
+python-dotenv
+utils
+verboselogs
+PyAudio
+
